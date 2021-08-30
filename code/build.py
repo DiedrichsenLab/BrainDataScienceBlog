@@ -8,34 +8,31 @@ import xml.etree.ElementTree as etree
 import re
 import sys
 import yaml
+import os
 
 buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience/'
-sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Brain_Data_Science_Blog'
+sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
 
 def parse_blog(dirname):
     """
         Parsing
     """
     markdown_include = MarkdownInclude(configs={'base_path':'./source/', 'encoding': 'iso-8859-1'})
-    head_ext = me.HeadExt()
-    title_ext = me.TitleExt()
-    sidebar_ext = me.SidebarExt()
-    personcell_ext = me.PersoncellExt()
     tree_ext = me.TreeExtension()
-    ref_ext = me.ReferenceExt()
-    icon_ext = me.IconcellExt()
-    toolcell_ext = me.ToolcellExt()
+    side_ext = me.SidenoteExtension()
+    margin_ext = me.MarginnoteExtension()
+    ref_ext = me.ReferenceExtension()
 
     print(f'parsing {dirname}')
-    ext=['md_in_html',markdown_include,head_ext,title_ext,sidebar_ext,
-    personcell_ext,tree_ext,ref_ext,icon_ext,toolcell_ext,'attr_list','footnotes']
+    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext]
 
-    with open(f"{sourceDir}/{dirname}/info.yaml", "r", encoding="utf-8") as info_file:
+    os.chdir(f"{sourceDir}/{dirname}")
+    with open("info.yaml", "r", encoding="utf-8") as info_file:
         info = yaml.load(info_file,Loader=yaml.FullLoader)
-    with open(f"{sourceDir}/{dirname}/text.md", "r", encoding="utf-8") as input_file:
+    with open("text.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
         html = md.markdown(text,extensions=ext)
-        with open(f"{buildDir}/{dirname}/index.htm", "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
+        with open(f"{buildDir}/{dirname}.htm", "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
             output_file.write(html)
 
 def read_html(filename):
