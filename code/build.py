@@ -9,6 +9,7 @@ import re
 import sys
 import yaml
 import os
+import pandas as pd
 
 buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience/'
 sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
@@ -32,17 +33,47 @@ def parse_blog(dirname):
     with open("text.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
         html = md.markdown(text,extensions=ext)
-        with open(f"{buildDir}/{dirname}.htm", "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
+        with open(f"{buildDir}/{dirname}/index.htm", "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
             output_file.write(html)
+    return(info)
 
-def read_html(filename):
-    with open(f"build/{filename}.html", "r", encoding="utf-8") as input_file:
-        text = input_file.read()
-        soup = BeautifulSoup(text, 'html.parser')
-        return soup
+
+def make_index(blogs,name):
+    Edoc = etree.Element('html')
+    Ehead = etree.SubElement(Edoc,'head')
+    t=etree.SubElement(Ehead,'title')
+    t.text =  'Brain, Data, and Science'
+    etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'tufteSans.css'})
+    etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'toc.css'})
+    etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
+
+    Ebody = etree.SubElement(Edoc,'body')
+    Eart = etree.SubElement(Ebody,'article')
+    Eh1 = etree.SubElement(Eart,'h1')
+    Eh1.text = 'Brain, Data, and Science'
+    ESect = etree.SubElement(Eart,'section')
+    for blog in blogs:
+        Ediv = etree.SubElement(ESect,'div',attrib={'class':'tocContainer'})
+      <div class="tocContainer">
+        <a href="blog_example.htm">
+          <img class="tocImage" src="assets/icon_suitpy.png">
+        </a>
+        <div class="tocText">
+          <a href="blog_example.htm"><p class="tocTitle">Example Blog</p></a>
+          <p class="tocAuthors">Jörn Diedrichsen</p>
+          <p class="tocDescr">In this blog, I describe the philosophy and technology behind the Brain, Data, and Science blog and explain of how to contribute... </p>
+        </div>
+      </div>
 
 def main():
-    parse_blog("example_blog1")
+    with open("list.yaml", "r", encoding="utf-8") as list_file:
+        listing = yaml.load(list_file,Loader=yaml.FullLoader)
+    info = []
+    for blog in listing['blogs']:
+        info.append(parse_blog(blog))
+    allblogs = pd.DataFrame(info)
+    make_index(allblogs,name="index.htm")
+
 
 if __name__ == "__main__":
     main()

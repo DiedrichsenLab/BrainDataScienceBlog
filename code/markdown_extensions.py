@@ -155,11 +155,11 @@ class MyTreeprocessor(Treeprocessor):
     def run(self, root):
         Edoc = etree.Element('html')
         Ehead = etree.SubElement(Edoc,'head')
-        Ecss1 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'tufte.css'})
-        Ecss2 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'latex.css'})
+        Ecss1 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../tufteSans.css'})
+        Ecss2 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../latex.css'})
         Emeta = etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
 
-        EMathHJax1 = etree.SubElement(Ehead,'script',attrib={'src':"mathjax-config.js"})
+        EMathHJax1 = etree.SubElement(Ehead,'script',attrib={'src':"../mathjax-config.js"})
         EMathHJax2 = etree.SubElement(Ehead,'script',attrib={'src':"https://polyfill.io/v3/polyfill.min.js?features=es6"})
         EMathHJax1 = etree.SubElement(Ehead,'script',attrib={'type':"text/javascript",
                                                                 'id':"MathJax-script",
