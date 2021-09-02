@@ -11,7 +11,7 @@ import yaml
 import os
 import pandas as pd
 
-buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience/'
+buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
 sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
 
 def parse_blog(dirname):
@@ -30,6 +30,7 @@ def parse_blog(dirname):
     os.chdir(f"{sourceDir}/{dirname}")
     with open("info.yaml", "r", encoding="utf-8") as info_file:
         info = yaml.load(info_file,Loader=yaml.FullLoader)
+        info['id']=dirname
     with open("text.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
         html = md.markdown(text,extensions=ext)
@@ -39,6 +40,7 @@ def parse_blog(dirname):
 
 
 def make_index(blogs,name):
+    tree = etree.ElementTree()
     Edoc = etree.Element('html')
     Ehead = etree.SubElement(Edoc,'head')
     t=etree.SubElement(Ehead,'title')
@@ -48,22 +50,22 @@ def make_index(blogs,name):
     etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
 
     Ebody = etree.SubElement(Edoc,'body')
-    Eart = etree.SubElement(Ebody,'article')
-    Eh1 = etree.SubElement(Eart,'h1')
+    Eh1 = etree.SubElement(Ebody,'h1')
     Eh1.text = 'Brain, Data, and Science'
-    ESect = etree.SubElement(Eart,'section')
-    for blog in blogs:
-        Ediv = etree.SubElement(ESect,'div',attrib={'class':'tocContainer'})
-      <div class="tocContainer">
-        <a href="blog_example.htm">
-          <img class="tocImage" src="assets/icon_suitpy.png">
-        </a>
-        <div class="tocText">
-          <a href="blog_example.htm"><p class="tocTitle">Example Blog</p></a>
-          <p class="tocAuthors">Jörn Diedrichsen</p>
-          <p class="tocDescr">In this blog, I describe the philosophy and technology behind the Brain, Data, and Science blog and explain of how to contribute... </p>
-        </div>
-      </div>
+    for i,blog in blogs.iterrows():
+        Elink = etree.SubElement(Ebody,'a',attrib={'href':blog.id})
+        Ediv = etree.SubElement(Elink,'div',attrib={'class':'tocContainer'})
+        etree.SubElement(Ediv,'img',attrib={'class':'tocImage','src':f"{blog.id}/icon.png"})
+        Etxt = etree.SubElement(Ediv,'div',attrib={'class':"tocText"})
+        Etitle = etree.SubElement(Etxt,'p',attrib={'class':"tocTitle"})
+        Etitle.text = blog.title
+        Eauthors = etree.SubElement(Etxt,'p',attrib={'class':"tocAuthors"})
+        Eauthors.text = ', '.join([str(elem) for elem in blog.authors])
+        Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDescr"})
+        Edescrip.text = blog.description
+    tree._setroot(Edoc)
+    tree.write(name)
+
 
 def main():
     with open("list.yaml", "r", encoding="utf-8") as list_file:
@@ -72,7 +74,7 @@ def main():
     for blog in listing['blogs']:
         info.append(parse_blog(blog))
     allblogs = pd.DataFrame(info)
-    make_index(allblogs,name="index.htm")
+    make_index(allblogs,name=f"{buildDir}/index.htm")
 
 
 if __name__ == "__main__":
