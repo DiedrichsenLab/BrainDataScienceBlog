@@ -8,9 +8,20 @@ import sys
 import yaml
 import os
 import pandas as pd
+import shutil 
 
 buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
 sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
+
+def copy_resource(filename):
+    """
+        Copies resource file from current directory to the corresponding
+        location in the build directory. 
+    """
+    currdir = os. getcwd()
+    folder = os.path.basename(currdir)
+    target = os.path.join(buildDir,folder,filename)
+    shutil.copy2(filename,target)
 
 def parse_blog(dirname):
     """

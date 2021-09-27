@@ -8,6 +8,8 @@ from markdown.util import AtomicString
 import re
 import xml.etree.ElementTree as etree
 from pybtex.database import parse_file
+import os
+from build import copy_resource
 
 """
     Inline Processor for mathjax
@@ -181,10 +183,36 @@ class FigureProcessor(BlockProcessor):
 
     def run(self,parent,blocks):
         m = re.match(self.RE_FENCE_START, blocks[0])
-        file = m.group(2)
+        # First copy the image file to the corresponding Build directory 
+        filename = m.group(2)
+        _,ext = os.path.splitext(filename)
+        copy_resource(filename)
+        
+        # Get the caption
+        caption = re.sub(self.RE_FENCE_START,'',blocks[0])
 
-        e = etree.SubElement(parent, 'figure')
-        e.text = AtomicString('\n$$' + blocks[0] + '$$\n')
+        if ext=='.htm' or ext=='.html':
+            if len(caption)>0:
+                Ep = etree.SubElement(parent, 'p')
+                etree.SubElement(Ep,'label',attrib={'for':filename,'class':'margin-toggle'})
+                etree.SubElement(Ep,'input',attrib={'type':'checkbox','id':filename,'class':'margin-toggle'})
+                Ecap = etree.SubElement(Ep,'span',attrib={'class':'marginnote'})
+                Ecap.text = caption
+            # Doesn't seem to work on some files: TR=etree.parse(filename)
+            # Overall it would be preferred solution (maybe try and then catch?)
+            with open (filename, "r") as myfile:
+                data=myfile.read()
+                Efig = etree.SubElement(parent, 'div')
+                Efig.text = data
+        else: # Static image 
+            Efig = etree.SubElement(parent, 'figure')
+            if len(caption)>0:
+                etree.SubElement(Efig,'label',attrib={'for':filename,'class':'margin-toggle'})
+                etree.SubElement(Efig,'input',attrib={'type':'checkbox','id':filename,'class':'margin-toggle'})
+                Ecap = etree.SubElement(Efig,'span',attrib={'class':'marginnote'})
+                Ecap.text = caption
+            Eimg = etree.SubElement(Efig,'img',attrib={'src':filename,'alt':m.group(1)})
+        
         blocks.pop(0)
         return True
 
