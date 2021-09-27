@@ -4,6 +4,7 @@ from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
+from markdown.util import AtomicString
 import re
 import xml.etree.ElementTree as etree
 from pybtex.database import parse_file
@@ -14,14 +15,36 @@ from pybtex.database import parse_file
 
 class MathInlineProcessor(InlineProcessor):
     def handleMatch(self, m, data):
-        el = etree.Element('del')
-        el.text = m.group(1)
+        el = etree.Element('span')
+        el.text = AtomicString('$' + m.group(1) + '$')
         return el, m.start(0), m.end(0)
 
 class MathInlineExtension(Extension):
     def extendMarkdown(self, md):
-        MATH_PATTERN = r'$(.*?)$'
+        MATH_PATTERN = r'\$(.*?)\$'
         md.inlinePatterns.register(MathInlineProcessor(MATH_PATTERN, md), 'inMath', 175)
+
+"""
+    Block Processor for mathjax
+"""
+
+class MathBlockProcessor(BlockProcessor):
+    RE_FENCE_START = r'\$\$'
+
+    def test(self, parent, block):
+        return re.match(self.RE_FENCE_START,block)
+
+    def run(self,parent,blocks):
+        blocks[0] = re.sub(self.RE_FENCE_START, '', blocks[0])
+        e = etree.SubElement(parent, 'p')
+        e.text = AtomicString('\n$$' + blocks[0] + '$$\n')
+        blocks.pop(0)
+        return True
+
+class MathBlockExtension(Extension):
+    def extendMarkdown(self, md):
+        MATH_PATTERN = r'\$(.*?)\$'
+        md.parser.blockprocessors.register(MathBlockProcessor(md.parser), 'math', 175)
 
 """
     Inline Processor for Sidenotes
@@ -67,7 +90,7 @@ class MarginInlineProcessor(InlineProcessor):
 class MarginnoteExtension(Extension):
     def extendMarkdown(self, md):
         MARG_PATTERN = r'\{\+margin:(.+?):(.+?)\}'
-        md.inlinePatterns.register(MarginInlineProcessor(MARG_PATTERN, md), 'marginnote', 173)
+        md.inlinePatterns.register(MarginInlineProcessor(MARG_PATTERN, md), 'marginnote', 175)
 
 """
     New throught Processor for smallCAPS
@@ -83,7 +106,7 @@ class CapsInlineProcessor(InlineProcessor):
         Ecaps.text = m.group(1)
         return Ecaps, m.start(0), m.end(0)
 
-class MarginnoteExtension(Extension):
+class CapsExtension(Extension):
     def extendMarkdown(self, md):
         CAPS_PATTERN = r'\{\{(.+?)\}\}'
         md.inlinePatterns.register(CapsInlineProcessor(CAPS_PATTERN, md), 'caps', 173)
@@ -147,6 +170,26 @@ class ReferenceExtension(Extension):
         REF_PATTERN = r'\{\+ref:\s*(.+?)\}'
         md.inlinePatterns.register(ReferenceProcessor(REF_PATTERN, md), 'ref', 175)
 
+"""
+    Block Processor for Figure
+"""
+class FigureProcessor(BlockProcessor):
+    RE_FENCE_START = r'!\[(.+?)\]\((.+?)\)'
+
+    def test(self, parent, block):
+        return re.match(self.RE_FENCE_START,block)
+
+    def run(self,parent,blocks):
+        m = re.match(self.RE_FENCE_START, blocks[0])
+        e = etree.SubElement(parent, 'figure')
+        e.text = AtomicString('\n$$' + blocks[0] + '$$\n')
+        blocks.pop(0)
+        return True
+
+class FigureExtension(Extension):
+    def extendMarkdown(self, md):
+        MATH_PATTERN = r'\$(.*?)\$'
+        md.parser.blockprocessors.register(MathBlockProcessor(md.parser), 'math', 175)
 
 """
     Finalize tree
@@ -166,7 +209,7 @@ class MyTreeprocessor(Treeprocessor):
                                                                 'src':"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"})
         Ebody = etree.SubElement(Edoc,'body')
         Eart = etree.SubElement(Ebody,'article')
-        elements = root.getchildren()
+        elements = list(root)
         for el in elements:
             Eart.append(el)
             root.remove(el)

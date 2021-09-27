@@ -2,8 +2,6 @@
 import markdown as md
 import markdown_extensions as me
 from markdown_include.include import MarkdownInclude
-from bs4 import BeautifulSoup
-from markdown_include.include import MarkdownInclude
 import xml.etree.ElementTree as etree
 import re
 import sys
@@ -23,9 +21,11 @@ def parse_blog(dirname):
     side_ext = me.SidenoteExtension()
     margin_ext = me.MarginnoteExtension()
     ref_ext = me.ReferenceExtension()
+    math_ext = me.MathInlineExtension()
+    math_bext = me.MathBlockExtension()
 
     print(f'parsing {dirname}')
-    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext]
+    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,math_ext,math_bext]
 
     os.chdir(f"{sourceDir}/{dirname}")
     with open("info.yaml", "r", encoding="utf-8") as info_file:
@@ -68,14 +68,14 @@ def make_index(blogs,name):
 
 
 def main():
+    """ Build all blogs"""
     with open("list.yaml", "r", encoding="utf-8") as list_file:
         listing = yaml.load(list_file,Loader=yaml.FullLoader)
-    info = []
-    for blog in listing['blogs']:
-        info.append(parse_blog(blog))
-    allblogs = pd.DataFrame(info)
-    make_index(allblogs,name=f"{buildDir}/index.htm")
-
+        info = []
+        for blog in listing['blogs']:
+            info.append(parse_blog(blog))
+        allblogs = pd.DataFrame(info)
+        make_index(allblogs,name=f"{buildDir}/index.htm")
 
 if __name__ == "__main__":
     main()
