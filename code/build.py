@@ -23,9 +23,11 @@ def parse_blog(dirname):
     ref_ext = me.ReferenceExtension()
     math_ext = me.MathInlineExtension()
     math_bext = me.MathBlockExtension()
+    fig_ext = me.FigureExtension()
 
     print(f'parsing {dirname}')
-    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,math_ext,math_bext]
+    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,
+         math_ext,math_bext,fig_ext]
 
     os.chdir(f"{sourceDir}/{dirname}")
     with open("info.yaml", "r", encoding="utf-8") as info_file:

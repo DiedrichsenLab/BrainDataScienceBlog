@@ -181,6 +181,8 @@ class FigureProcessor(BlockProcessor):
 
     def run(self,parent,blocks):
         m = re.match(self.RE_FENCE_START, blocks[0])
+        file = m.group(2)
+
         e = etree.SubElement(parent, 'figure')
         e.text = AtomicString('\n$$' + blocks[0] + '$$\n')
         blocks.pop(0)
@@ -189,7 +191,7 @@ class FigureProcessor(BlockProcessor):
 class FigureExtension(Extension):
     def extendMarkdown(self, md):
         MATH_PATTERN = r'\$(.*?)\$'
-        md.parser.blockprocessors.register(MathBlockProcessor(md.parser), 'math', 175)
+        md.parser.blockprocessors.register(FigureProcessor(md.parser), 'fig', 175)
 
 """
     Finalize tree
