@@ -44,6 +44,53 @@ def do_sim(corr,signal=np.linspace(0,5,20),n_sim=50):
     S = pd.DataFrame({'r_naive':Lcorr,'signal':Lsign,'noiseCeil':LnoiseCeil})
     return S
 
+def plot_Figure2(D,T):
+    # This code generates an interactive Figure for Figure2, using plotly
+    fig = go.Figure() 
+
+    marker=dict(color='rgba(0, 200, 0, 0.04)', size=10)
+    fig.add_scatter(x=D.signal,y=D.r_naive,
+                name='individual simulations',mode='markers',
+                marker=marker,hoverinfo='skip',
+                showlegend=False)
+
+    # Make the hover-template: Once that has been set, 
+    # hoverinfo does not have an effect any more
+    hoverT = '<i>Signal</i>: %{x:.2f}<br>Mean: %{y:.2f}<br>%{text}'
+
+    fig.add_scatter(x=T.signal, y=T.r_naive,
+                name='',
+                text = text,
+                hovertemplate = hoverT,
+                line = dict(color='rgba(0, 100, 0, 1)', width=4),
+                showlegend=False)
+
+    hoverT = 'True correlation<br>%{y:.2f}'
+
+    fig.add_scatter(x=T.signal, y=np.ones((T.shape[0],))*0.7, 
+                name='',
+                hovertemplate = hoverT,
+                line = dict(color='rgba(0, 0, 0, 1)', width=1, dash='dash'),
+                showlegend=False)
+
+
+    fig.update_layout(
+            hovermode='closest', 
+            autosize=False,
+            template = 'plotly_white',
+            width=700,
+            height=500,
+            title = 'Naive correlations',
+            yaxis=dict(
+                title_text="Correlation",
+                titlefont=dict(size=18)
+            ),
+            xaxis=dict(
+                title_text="Signal",
+                titlefont=dict(size=18)
+            )
+        )
+    return(fig)
 
 if __name__ == "__main__":
     D = do_sim(1,n_sim=50)
