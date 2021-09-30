@@ -202,7 +202,8 @@ class FigureProcessor(BlockProcessor):
             # Overall it would be preferred solution (maybe try and then catch?)
             with open (filename, "r") as myfile:
                 data=myfile.read()
-                Efig = etree.SubElement(parent, 'div')
+                Efig = etree.SubElement(parent, 'div',
+                    attrib={'class':'htmlfigsquare'})
                 Efig.text = data
         else: # Static image 
             Efig = etree.SubElement(parent, 'figure')
@@ -232,11 +233,12 @@ class MyTreeprocessor(Treeprocessor):
         Ecss2 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../latex.css'})
         Emeta = etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
 
-        EMathHJax1 = etree.SubElement(Ehead,'script',attrib={'src':"../mathjax-config.js"})
-        EMathHJax2 = etree.SubElement(Ehead,'script',attrib={'src':"https://polyfill.io/v3/polyfill.min.js?features=es6"})
-        EMathHJax1 = etree.SubElement(Ehead,'script',attrib={'type':"text/javascript",
-                                                                'id':"MathJax-script",
-                                                                'src':"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"})
+        EMathHJax1 = etree.SubElement(Ehead,'script',
+            attrib={'src':"../mathjax-config.js"})
+        EMathHJax2 = etree.SubElement(Ehead,'script',
+            attrib={'src':"https://polyfill.io/v3/polyfill.min.js?features=es6"})
+        EMathHJax1 = etree.SubElement(Ehead,'script',
+            attrib={'type':"text/javascript",'id':"MathJax-script",'src':"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"})
         Ebody = etree.SubElement(Edoc,'body')
         Eart = etree.SubElement(Ebody,'article')
         elements = list(root)
