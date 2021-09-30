@@ -206,7 +206,7 @@ def dosim_3():
     fig.write_html("Figure_3.html",include_plotlyjs='cdn',full_html=False)
     fig.show()
 
-def do_sim_pcm(corr=[0.7,0.9,0.7],signal=[0.2,0.2,0.3],n_sim=10): 
+def do_sim_pcm(corr=[0.7,0.9,0.7],signal=[1,0.2,0.3],n_sim=10): 
     # Make the design in this case it's 2 runs, 2 conditions!  
     cond_vec,part_vec = pcm.sim.make_design(2,2)
     # Generate different models from 0 to 1
@@ -215,24 +215,12 @@ def do_sim_pcm(corr=[0.7,0.9,0.7],signal=[0.2,0.2,0.3],n_sim=10):
         M.append(pcm.CorrelationModel(f"R{r:0.2f}",num_items=1,corr=r,cond_effect=False))
     # For each simulation scenario, get different 
     for i,r in enumerate(corr): 
-        Mtrue = pcm.CorrelationModel('corr',num_items=1,corr=corr,cond_effect=False)
-        G,dG = M.predict([0,0])
-        D = pcm.sim.make_dataset(M, [0,-0.5], cond_vec, n_sim=n_sim, signal=signal[i])
-        for i in range(n_sim):
-            data = D[i].measurements
-            Lcorr.append(get_corr(data,cond_vec))
-            LnoiseCeil.append(get_noiseceil(data,cond_vec))
-            LcrossBlock.append(get_crossblock(data,cond_vec,part_vec))
-            Lsign.append(s)
-    S = pd.DataFrame({'r_naive':Lcorr,'signal':Lsign,
-                        'noiseCeil':LnoiseCeil,'cross_block':LcrossBlock})
-    S['true'] = np.ones((S.shape[0],))*corr
-    return S
-
-
-def dosim_4():
+        Mtrue = pcm.CorrelationModel('corr',num_items=1,corr=r,cond_effect=False)
+        D = pcm.sim.make_dataset(Mtrue, [0,-0.5], cond_vec,part_vec=part_vec,n_sim=n_sim, signal=signal[i])
+        T = pcm.inference.fit_model_individ(D,M,run_effect='None')
+        pass
 
 
 if __name__ == "__main__":
-    dosim_3()
+    do_sim_pcm()
     pass
