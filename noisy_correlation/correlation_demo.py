@@ -59,7 +59,7 @@ def do_sim(corr,signal=np.linspace(0,5,20),n_sim=50):
     S['true'] = np.ones((S.shape[0],))*corr
     return S
 
-def do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps = 11):
+def do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps = 11,randseed=None):
     # Make the design in this case it's 2 runs, 2 conditions!
     cond_vec,part_vec = pcm.sim.make_design(2,2)
     # Generate different models from 0 to 1
@@ -70,8 +70,9 @@ def do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps = 11):
     M.append(Mflex)
     # For each simulation scenario, get different
 
+    rng = np.random.default_rng(randseed)
     Mtrue = pcm.CorrelationModel('corr',num_items=1,corr=corr,cond_effect=False)
-    D = pcm.sim.make_dataset(Mtrue, [0,0], cond_vec,part_vec=part_vec,n_sim=n_sim, signal=signal)
+    D = pcm.sim.make_dataset(Mtrue, [0,0], cond_vec,part_vec=part_vec,n_sim=n_sim, signal=signal, rng=rng)
     T,theta = pcm.inference.fit_model_individ(D,M,fixed_effect=None,fit_scale=False)
     return T,theta,M
 
@@ -277,9 +278,9 @@ def plot_Figure4(T,theta,M):
             ),
             xaxis=dict(
                 title_text="Signal to Noise",
-                titlefont=dict(size=18)
+                titlefont=dict(size=18),
+                range=[0,1.02])
             )
-        )
     return(fig)
 
 
@@ -314,7 +315,7 @@ def dosim_3():
     fig.show()
 
 def dosim_4():
-    T,theta,M = do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps=21)
+    T,theta,M = do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps=21,randseed=11)
     fig=plot_Figure4(T,theta,M)
     fig.show()
     pass
