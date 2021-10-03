@@ -8,7 +8,7 @@ import sys
 import yaml
 import os
 import pandas as pd
-import shutil 
+import shutil
 
 buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
 sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
@@ -16,7 +16,7 @@ sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScience
 def copy_resource(filename):
     """
         Copies resource file from current directory to the corresponding
-        location in the build directory. 
+        location in the build directory.
     """
     currdir = os. getcwd()
     folder = os.path.basename(currdir)
@@ -41,6 +41,7 @@ def parse_blog(dirname):
          math_ext,math_bext,fig_ext]
 
     os.chdir(f"{sourceDir}/{dirname}")
+    copy_resource("icon.png")
     with open("info.yaml", "r", encoding="utf-8") as info_file:
         info = yaml.load(info_file,Loader=yaml.FullLoader)
         info['id']=dirname
@@ -63,6 +64,15 @@ def make_index(blogs,name):
     etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
 
     Ebody = etree.SubElement(Edoc,'body')
+
+    # Add Navigation line
+    Enav = etree.SubElement(Ebody,'div',attrib={'class':'navline'})
+    Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
+    Ea1.text = 'Diedrichsenlab'
+    Et1 = etree.SubElement(Enav,'span')
+    Et1.text = ' > Brain, Data, and Science'
+
+
     Eh1 = etree.SubElement(Ebody,'h1')
     Eh1.text = 'Brain, Data, and Science'
     for i,blog in blogs.iterrows():
@@ -76,6 +86,8 @@ def make_index(blogs,name):
         Eauthors.text = ', '.join([str(elem) for elem in blog.authors])
         Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDescr"})
         Edescrip.text = blog.description
+
+    Ebody.append(Enav)
     tree._setroot(Edoc)
     tree.write(name)
 

@@ -1,7 +1,9 @@
-title: Example blog
+title: How to set up and format a blog
+shorttitle: Example blog
+tweet: empty
 authors:
   - Jörn Diedrichsen
-released: 2021-08-12
-modified: 2021-08-20
+released: 2021-10-12
+modified: 2021-10-20
 version: 2.0
-description: In this blog, I describe the philosophy and technology behind the Brain, Data, and Science blog and explain of how to contribute...
+description: This is an example blog that gives examples of formating and setup of new blogs

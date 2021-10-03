@@ -9,6 +9,7 @@ import re
 import xml.etree.ElementTree as etree
 from pybtex.database import parse_file
 import os
+import yaml
 from build import copy_resource
 
 """
@@ -183,11 +184,11 @@ class FigureProcessor(BlockProcessor):
 
     def run(self,parent,blocks):
         m = re.match(self.RE_FENCE_START, blocks[0])
-        # First copy the image file to the corresponding Build directory 
+        # First copy the image file to the corresponding Build directory
         filename = m.group(2)
         _,ext = os.path.splitext(filename)
         copy_resource(filename)
-        
+
         # Get the caption
         caption = re.sub(self.RE_FENCE_START,'',blocks[0])
 
@@ -205,7 +206,7 @@ class FigureProcessor(BlockProcessor):
                 Efig = etree.SubElement(parent, 'div',
                     attrib={'class':'htmlfigsquare'})
                 Efig.text = data
-        else: # Static image 
+        else: # Static image
             Efig = etree.SubElement(parent, 'figure')
             if len(caption)>0:
                 etree.SubElement(Efig,'label',attrib={'for':filename,'class':'margin-toggle'})
@@ -213,7 +214,7 @@ class FigureProcessor(BlockProcessor):
                 Ecap = etree.SubElement(Efig,'span',attrib={'class':'marginnote'})
                 Ecap.text = caption
             Eimg = etree.SubElement(Efig,'img',attrib={'src':filename,'alt':m.group(1)})
-        
+
         blocks.pop(0)
         return True
 
@@ -227,6 +228,10 @@ class FigureExtension(Extension):
 """
 class MyTreeprocessor(Treeprocessor):
     def run(self, root):
+        with open("info.yaml", "r", encoding="utf-8") as info_file:
+            info = yaml.load(info_file,Loader=yaml.FullLoader)
+
+        # Make HMTL Header
         Edoc = etree.Element('html')
         Ehead = etree.SubElement(Edoc,'head')
         Ecss1 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../tufteSans.css'})
@@ -241,10 +246,31 @@ class MyTreeprocessor(Treeprocessor):
             attrib={'type':"text/javascript",'id':"MathJax-script",'src':"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"})
         Ebody = etree.SubElement(Edoc,'body')
         Eart = etree.SubElement(Ebody,'article')
+
+        # Add Navigation line
+        Enav = etree.SubElement(Eart,'div',attrib={'class':'navline'})
+        Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../../index.htm'})
+        Ea1.text = 'Diedrichsenlab'
+        Et1 = etree.SubElement(Enav,'span')
+        Et1.text = ' > '
+        Ea2 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
+        Ea2.text = 'Brain, Data, and Science'
+        Et2 = etree.SubElement(Enav,'span')
+        Et2.text = f" > {info['shorttitle']}"
+
+        # Copy over the whole blog
         elements = list(root)
         for el in elements:
             Eart.append(el)
             root.remove(el)
+
+        # Make the footer
+        # Ef = etree.SubElement(Eart,'div',attrib={'class':'footer'})
+        # Ef.text = f"<h3>Comments, discussions, feedback, or likes:</h3> {info.tweet}"
+
+        # Add another navigation line
+        Eart.append(Enav)
+
         root.append(Edoc)
         return None
         # No return statement is same as `return None`

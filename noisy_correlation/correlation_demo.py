@@ -6,6 +6,9 @@ import plotly.express as pe
 import plotly.io as pio
 import plotly.graph_objects as go
 
+
+margdict = dict(l=10,r=10, b=10, t=10, pad=4)
+
 def get_corr(X,cond_vec):
     p1 = X[cond_vec==0,:].mean(axis=0)
     p2 = X[cond_vec==1,:].mean(axis=0)
@@ -38,7 +41,7 @@ def get_crossblock(X,cond_vec,part_vec):
     return crosscorr
 
 
-def do_sim(corr,signal=np.linspace(0,5,20),n_sim=50):
+def do_sim(corr,signal=np.linspace(0,5,20),n_sim=50,randseed=None):
     M = pcm.CorrelationModel('corr',num_items=1,corr=corr,cond_effect=False)
     G,dG = M.predict([0,0])
     cond_vec,part_vec = pcm.sim.make_design(2,2)
@@ -46,8 +49,10 @@ def do_sim(corr,signal=np.linspace(0,5,20),n_sim=50):
     LnoiseCeil = []
     Lsign = []
     LcrossBlock =[]
+    rng = np.random.default_rng(randseed)
+
     for s in signal:
-        D = pcm.sim.make_dataset(M, [0,-0.5], cond_vec, n_sim=n_sim, signal=s)
+        D = pcm.sim.make_dataset(M, [0,0], cond_vec, n_sim=n_sim, signal=s,rng=rng)
         for i in range(n_sim):
             data = D[i].measurements
             Lcorr.append(get_corr(data,cond_vec))
@@ -123,7 +128,8 @@ def plot_Figure2(D,T,Tstd):
             xaxis=dict(
                 title_text="Signal to Noise",
                 titlefont=dict(size=18)
-            )
+            ),
+            margin = margdict
         )
     return(fig)
 
@@ -159,8 +165,8 @@ def plot_Figure3(D,T,Tstd):
 
         x = T.signal.to_numpy()
         y = T[line].to_numpy()
-        y_upper = y + Tstd[line].to_numpy()/10
-        y_lower = y - Tstd[line].to_numpy()/10
+        y_upper = y + Tstd[line].to_numpy()/np.sqrt(50)
+        y_lower = y - Tstd[line].to_numpy()/np.sqrt(50)
 
         fig.add_scatter(x=T.signal, y=T[line],
                 name='',
@@ -179,7 +185,7 @@ def plot_Figure3(D,T,Tstd):
             showlegend=False)
 
     fig.update_layout(
-            hovermode='closest',
+            hovermode='x',
             autosize=True, # width =xx, heigh =xxx
             template = 'plotly_white',
             yaxis=dict(
@@ -188,8 +194,9 @@ def plot_Figure3(D,T,Tstd):
             ),
             xaxis=dict(
                 title_text="Signal to Noise",
-                titlefont=dict(size=18)
-            )
+                titlefont=dict(size=18),
+                range=[0,3.1]),
+            margin = margdict
         )
     return(fig)
 
@@ -279,14 +286,14 @@ def plot_Figure4(T,theta,M):
             xaxis=dict(
                 title_text="Signal to Noise",
                 titlefont=dict(size=18),
-                range=[0,1.02])
-            )
+                range=[0,1.02]),
+            margin=margdict)
     return(fig)
 
 
 def dosim_2():
     sig = np.linspace(0.1,5.1,21)# np.logspace(np.log(0.2),np.log(5),10)
-    D = do_sim(0.7,n_sim=200,signal=sig)
+    D = do_sim(0.7,n_sim=200,signal=sig,randseed=10)
     D['noiseceil_nan'] = np.isnan(D.noiseCeil)
     D['corr_corrected'] = D.r_naive / D.noiseCeil
     D['corr_corrected_imp'] = D.corr_corrected
@@ -300,8 +307,8 @@ def dosim_2():
     fig.show()
 
 def dosim_3():
-    sig = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.5,2,2.5,3,3.5,4])# np.logspace(np.log(0.2),np.log(5),10)
-    D = do_sim(0.7,n_sim=200,signal=sig)
+    sig = np.array([0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.5,0.6,0.7,0.8,0.9,1.5,2,2.5,3])# np.logspace(np.log(0.2),np.log(5),10)
+    D = do_sim(0.7,n_sim=10000,signal=sig,randseed=12)
     D['noiseceil_nan'] = np.isnan(D.noiseCeil)
     D['corr_corrected'] = D.r_naive / D.noiseCeil
     D['corr_corrected_imp'] = D.corr_corrected
@@ -317,6 +324,7 @@ def dosim_3():
 def dosim_4():
     T,theta,M = do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps=21,randseed=11)
     fig=plot_Figure4(T,theta,M)
+    fig.write_html("Figure_4.html",include_plotlyjs='cdn',full_html=False)
     fig.show()
     pass
 
@@ -324,5 +332,5 @@ def dosim_4():
 
 
 if __name__ == "__main__":
-    dosim_4()
+    dosim_3()
     pass
