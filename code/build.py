@@ -67,16 +67,16 @@ def make_index(blogs,name):
 
     # Add Navigation line
     Enav = etree.SubElement(Ebody,'div',attrib={'class':'navline'})
-    Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
-    Ea1.text = 'Diedrichsenlab'
-    Et1 = etree.SubElement(Enav,'span')
-    Et1.text = ' > Brain, Data, and Science'
+    # Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
+    # Ea1.text = 'Diedrichsenlab'
+    # Et1 = etree.SubElement(Enav,'span')
+    Enav.text = 'Brain, Data, and Science'
 
 
     Eh1 = etree.SubElement(Ebody,'h1')
     Eh1.text = 'Brain, Data, and Science'
     for i,blog in blogs.iterrows():
-        Elink = etree.SubElement(Ebody,'a',attrib={'href':blog.id})
+        Elink = etree.SubElement(Ebody,'a',attrib={'href':blog.id + '/index.htm'})
         Ediv = etree.SubElement(Elink,'div',attrib={'class':'tocContainer'})
         etree.SubElement(Ediv,'img',attrib={'class':'tocImage','src':f"{blog.id}/icon.png"})
         Etxt = etree.SubElement(Ediv,'div',attrib={'class':"tocText"})
@@ -86,7 +86,8 @@ def make_index(blogs,name):
         Eauthors.text = ', '.join([str(elem) for elem in blog.authors])
         Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDescr"})
         Edescrip.text = blog.description
-
+        Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDate"})
+        Edescrip.text = f"First published: {blog['released']}"
     Ebody.append(Enav)
     tree._setroot(Edoc)
     tree.write(name)

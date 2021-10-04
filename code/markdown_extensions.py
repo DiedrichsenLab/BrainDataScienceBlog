@@ -12,10 +12,13 @@ import os
 import yaml
 from build import copy_resource
 
+# Global list of references
+_references = []
+
+
 """
     Inline Processor for mathjax
 """
-
 class MathInlineProcessor(InlineProcessor):
     def handleMatch(self, m, data):
         el = etree.Element('span')
@@ -133,18 +136,24 @@ def strip_doublehyphen(string):
     return new_str
 
 
+
 class ReferenceProcessor(InlineProcessor):
     """
         Reference Processor
-        {+ref:bibid}
+        {+citep:bibid} -> (Jones et al., 2012)
+        {+citet:bibid} -> Jones et al. (2012)
     """
 
     def __init__(self,pattern,md):
         self.bib = parse_file('references.bib')
+        _references = []
         super().__init__(pattern,md)
 
     def handleMatch(self, m, data):
-        ref_key = m.group(1)
+        mode = m.group(1)
+        ref_key = m.group(2)
+        if ref_key not in _references:
+            _references.append(ref_key)
         bib_e = self.bib.entries[ref_key]
         authors = bib_e.persons['author']
         text = ''
@@ -155,22 +164,29 @@ class ReferenceProcessor(InlineProcessor):
             text = text + strip_brackets(authors[0].last_names[0]) + ' & ' + strip_brackets(authors[1].last_names[0])
         else:
             text = text + strip_brackets(authors[0].last_names[0]) + ' et al.'
-        text = text + ' (' + bib_e.fields['year'] + '). '
-        text = text + strip_brackets(bib_e.fields['title']) + '. '
-        text = text + '<em>'+ strip_brackets(bib_e.fields['journal'])
-        text = text + '</em>'
-        text = text + '.'
+        if mode == 't':
+            text = text + ' (' + bib_e.fields['year'] + ')'
+        elif mode == 'p':
+            text = '(' + text + ', ' + bib_e.fields['year'] + ')'
+        else:
+            raise(NameError('can only understand +citep and +citet'))
 
-        Eside = etree.Element('span')
-        etree.SubElement(Eside,'label',attrib={'for':ref_key,'class':'margin-toggle sidenote-number'})
-        etree.SubElement(Eside,'input',attrib={'type':'checkbox','id':ref_key,'class':'margin-toggle'})
-        Espan = etree.SubElement(Eside,'span',attrib={'class':'sidenote'})
-        Espan.text = text
-        return Eside, m.start(0), m.end(0)
+
+        # text = text + strip_brackets(bib_e.fields['title']) + '. '
+        # text = text + '<em>'+ strip_brackets(bib_e.fields['journal'])
+        # text = text + '</em>'
+        # text = text + '.'
+
+        Eref = etree.Element('span')
+        Eref.text = text
+        # etree.SubElement(Eside,'label',attrib={'for':ref_key,'class':'margin-toggle sidenote-number'})
+        # etree.SubElement(Eside,'input',attrib={'type':'checkbox','id':ref_key,'class':'margin-toggle'})
+        # Espan = etree.SubElement(Eside,'span',attrib={'class':'sidenote'})
+        return Eref, m.start(0), m.end(0)
 
 class ReferenceExtension(Extension):
     def extendMarkdown(self, md):
-        REF_PATTERN = r'\{\+ref:\s*(.+?)\}'
+        REF_PATTERN = r'\[\+cite(.):\s*(.+?)\]'
         md.inlinePatterns.register(ReferenceProcessor(REF_PATTERN, md), 'ref', 175)
 
 """
@@ -227,6 +243,31 @@ class FigureExtension(Extension):
     Finalize tree
 """
 class MyTreeprocessor(Treeprocessor):
+
+    def add_references(self,Eart):
+        self.bib = parse_file('references.bib')
+        Esec = etree.SubElement(Eart,'section')
+        Eh2 = etree.SubElement(Esec,'h2')
+        Eh2.text='References'
+        for r in _references:
+            bib_e = self.bib.entries[r]
+            authors = bib_e.persons['author']
+            text = ''
+            num_auth = len(authors)
+            if (num_auth == 1 ):
+                text = text + strip_brackets(authors[0].last_names[0])
+            elif (num_auth == 2):
+                text = text + strip_brackets(authors[0].last_names[0]) + ' & ' + strip_brackets(authors[1].last_names[0])
+            else:
+                text = text + strip_brackets(authors[0].last_names[0]) + ' et al.'
+            text = text + ' (' + bib_e.fields['year'] + '). '
+            text = text + strip_brackets(bib_e.fields['title']) + '. '
+            text = text + '<em>'+ strip_brackets(bib_e.fields['journal']) + '</em>.'
+
+            Ep = etree.SubElement(Esec,'p')
+            Ep.text =  self.md.htmlStash.store(text)
+
+
     def run(self, root):
         with open("info.yaml", "r", encoding="utf-8") as info_file:
             info = yaml.load(info_file,Loader=yaml.FullLoader)
@@ -249,10 +290,10 @@ class MyTreeprocessor(Treeprocessor):
 
         # Add Navigation line
         Enav = etree.SubElement(Eart,'div',attrib={'class':'navline'})
-        Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../../index.htm'})
-        Ea1.text = 'Diedrichsenlab'
-        Et1 = etree.SubElement(Enav,'span')
-        Et1.text = ' > '
+        # Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../../index.htm'})
+        # Ea1.text = 'Diedrichsenlab'
+        # Et1 = etree.SubElement(Enav,'span')
+        # Et1.text = ' > '
         Ea2 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
         Ea2.text = 'Brain, Data, and Science'
         Et2 = etree.SubElement(Enav,'span')
@@ -264,9 +305,14 @@ class MyTreeprocessor(Treeprocessor):
             Eart.append(el)
             root.remove(el)
 
+        # Add reference section
+        if len(_references)>0:
+            self.add_references(Eart)
+
         # Make the footer
-        # Ef = etree.SubElement(Eart,'div',attrib={'class':'footer'})
-        # Ef.text = f"<h3>Comments, discussions, feedback, or likes:</h3> {info.tweet}"
+        Ef = etree.SubElement(Eart,'div',attrib={'class':'footer'})
+        html = f"<h3>Comments, discussions, feedback, or likes:</h3> {info['tweet']}"
+        Ef.text = self.md.htmlStash.store(html)
 
         # Add another navigation line
         Eart.append(Enav)
@@ -278,5 +324,5 @@ class MyTreeprocessor(Treeprocessor):
 class TreeExtension(Extension):
     def extendMarkdown(self, md):
         dict = self.getConfigInfo()
-        md.treeprocessors.register(MyTreeprocessor(md.parser), 'tree', 1)
+        md.treeprocessors.register(MyTreeprocessor(md), 'tree', 1)
 
