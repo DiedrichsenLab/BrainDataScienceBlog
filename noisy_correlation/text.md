@@ -4,7 +4,7 @@
 <section markdown="1">
 
 In neuroimaging, we often want to know how similar, or overlapping, two brain activity patterns are. If two tasks (let's call them *A* and *B*) activate a specific brain region in a similar way, we can infer that this brain region does something similar in the two conditions. If the activations are very different, we can conclude that this brain region does something quite dissimilar in the two situations. Often, we are not so concerned with the question whether task *A* activates the brain region more than task *B* - rather we want to know whether the *pattern* of activation across the brain's surface is the same or not - that is, we are interested in the *correlation* between the two activity patterns. 
-{+margin:m1:Of course, sometimes we do care about the amount of activation, in which case correlations are not the right measure. But that's a topic for another blog.}
+{+margin:Of course, sometimes we do care about the amount of activation, in which case correlations are not the right measure. But that's a topic for another blog.}
 The question of the correlation between two activations patterns re-occurs over and over. How much does encoding and retrival of the same item lead to similar activity pattterns? How about planning and execution of the same movement? Or does the pattern related to a specific movement change with training? However, estimating the the true correlation between two patterns can be extremely tricky.
 
 
@@ -60,8 +60,7 @@ r_{rel,a}=r(\mathbf{y}_{i,1},\mathbf{y}_{i,2})=\frac{cov(\mathbf{y}_{a,1},\mathb
 $$
 
 and by substitution in the previous formula, we can see that the noise ceiling for a correlation between two measured vectors (ie. the value that we should get if the true vectors are perfectly correlated) is the *geometric mean*, i.e. the square-root of the product, of the two reliabilities.
-{+margin:m1: This is the noise ceiling for the correlation between each of the two independent halves of the data. If we are interested in the noise ceiling for the correlation between the mean measured patterns, we need to account for the fact that we averaged of 2 (or in general N) independent measure. See the accompanying jupyter notebook for details. }
-
+{+margin: This is the noise ceiling for the correlation between each of the two independent halves of the data. If we are interested in the noise ceiling for the correlation between the mean measured patterns, we need to account for the fact that we averaged of 2 (or in general N) independent measure. See the accompanying jupyter notebook for details. }
 
 $$
 r_{ceil}=\sqrt{r_{rel,a} r_{rel,b}}
@@ -112,7 +111,7 @@ Instead of using frequentist test, we can of course also use the likelihoods to 
 I hope at this point you can see the advanatages of using a generative approach (as in PCM) to evaluate how large correlations between activity patterns are. Before jumping in and using the PCM toolbox, it is essential  to understand a few technical details that happen behind the scenes. 
 
 To evaluate the likelihood of the data given a specific correlation, we need to deal with some other parameters, in our case the variance of the signal ($\mathbf{x}_a$,$\mathbf{x}_b$),  and the noise ($\epsilon$). 
-I will denote these hyper-parameters {+side:s4:These unknowns are considered hyper-paramters (rather than parameters), as they characterize the distribution of the patterns, rather than the patterns themselves}.
+I will denote these hyper-parameters {+side:These unknowns are considered hyper-paramters (rather than parameters), as they characterize the distribution of the patterns, rather than the patterns themselves}.
 collectively by $\theta$. A practical way of estimating them  is simply to maximize the likelhood, i.e. use
 $$
 p(Y|r) \approx max_{\theta}{p(Y|r,\theta)}
@@ -120,7 +119,7 @@ $$
 
 These may seem like a bit of a cheat, but works in this this case quite well. Estimating parameters on the same data that we use to evaluate of course leads to an overestimation of the marginal likelihood. However, as the number of hyper-parameters is low and all correlation models have the same number of parameters, this bias will be approximately stable across all models. Since we are interested in the *difference* in log-likelihood across models, this small bias simply disappears. 
 
-If you want to compare models with different numbers of parameters, a more sophisticaed approach is required. For example, in Figure 4, we may want to test whether the likelihood for the maximum likelihood estimate for the correlation is larger than the correlation for 1. If we simly take the maximum likelihood for each subjects, the answer would be yes. A slightly different approach would be to use the group-estimate of the best correlation. While this reduced the bias tremendously, it is still a bit biased, as the mean still contains the data from the subject on which we are testing. In this case, we should determine the best fittign correlation on 19 subject, and evalute the likelihood on the last remaining subject. For more on group fits and cross-validated group fits see the PCM documentation. {+margin:ms:Another approach is to become even "more Bayesian" and treat the parameters as a unkown variable with a prior, and to introduce a hyper-hyper parameters to describe these prior}.  
+If you want to compare models with different numbers of parameters, a more sophisticaed approach is required. For example, in Figure 4, we may want to test whether the likelihood for the maximum likelihood estimate for the correlation is larger than the correlation for 1. If we simly take the maximum likelihood for each subjects, the answer would be yes. A slightly different approach would be to use the group-estimate of the best correlation. While this reduced the bias tremendously, it is still a bit biased, as the mean still contains the data from the subject on which we are testing. In this case, we should determine the best fittign correlation on 19 subject, and evalute the likelihood on the last remaining subject. For more on group fits and cross-validated group fits see the PCM documentation.{+margin:Another approach is to become even "more Bayesian" and treat the parameters as a unkown variable with a prior, and to introduce a hyper-hyper parameters to describe these prior}.  
 
 ## Extensions
 The situation considered her ewith two activity patterns and two measures per activity pattern is very simple. In most experiments, we have more complicated situations. Often want to know of the pattern associated with specific items are correlated between two conditiosn. For example, we want to know how the patterns for 4 different movements correlate (on average) across planning and execution. Or how the pattern to 30 objects correlated across images and words. In this case we also need to model the general differences between the 2 conditions (i.e planning vs. execution, or images vs. words). Additionally, we often need to account for correlaitons between patterns in a imaging run, or different covariance between the patterns for different items. Coming up with a good solution for all these problems using noise-ceiling or cross-block variances is hard. I find it much easier to add these details to the generative model - and indeed all these situaitona are implemented in PCM.  

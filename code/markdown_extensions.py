@@ -58,21 +58,25 @@ class MathBlockExtension(Extension):
 class SidenoteInlineProcessor(InlineProcessor):
     """
         Side note Processor
-        {+side:id:text}
+        {+side:text}
     """
+    def __init__(self,pattern,md):
+        self.num_sidenote = 0
+        super().__init__(pattern,md)
 
     def handleMatch(self, m, data):
+        self.num_sidenote = self.num_sidenote+1
         Eside = etree.Element('span')
-        id = m.group(1)
+        id = f"sn{self.num_sidenote}"
         etree.SubElement(Eside,'label',attrib={'for':id,'class':'margin-toggle sidenote-number'})
         etree.SubElement(Eside,'input',attrib={'type':'checkbox','id':id,'class':'margin-toggle'})
         Espan = etree.SubElement(Eside,'span',attrib={'class':'sidenote'})
-        Espan.text = m.group(2)
+        Espan.text = m.group(1)
         return Eside, m.start(0), m.end(0)
 
 class SidenoteExtension(Extension):
     def extendMarkdown(self, md):
-        SIDE_PATTERN = r'\{\+side:(.+?):(.+?)\}'
+        SIDE_PATTERN = r'\{\+side:(.+?)\}'
         md.inlinePatterns.register(SidenoteInlineProcessor(SIDE_PATTERN, md), 'sidenote', 174)
 
 """
@@ -81,21 +85,26 @@ class SidenoteExtension(Extension):
 class MarginInlineProcessor(InlineProcessor):
     """
         Margin note Processor
-        {+margin:id:text}
+        {+margin:text}
     """
+    def __init__(self,pattern,md):
+        self.num_margnote = 0
+        super().__init__(pattern,md)
 
     def handleMatch(self, m, data):
         Eside = etree.Element('span')
-        id = m.group(1)
-        etree.SubElement(Eside,'label',attrib={'for':id,'class':'margin-toggle'})
+        self.num_margnote = self.num_margnote+1
+        id = f"mn{self.num_margnote}"
+        El = etree.SubElement(Eside,'label',attrib={'for':id,'class':'margin-toggle'})
+        El.text = self.md.htmlStash.store("&#8853;")
         etree.SubElement(Eside,'input',attrib={'type':'checkbox','id':id,'class':'margin-toggle'})
         Espan = etree.SubElement(Eside,'span',attrib={'class':'marginnote'})
-        Espan.text = m.group(2)
+        Espan.text = m.group(1)
         return Eside, m.start(0), m.end(0)
 
 class MarginnoteExtension(Extension):
     def extendMarkdown(self, md):
-        MARG_PATTERN = r'\{\+margin:(.+?):(.+?)\}'
+        MARG_PATTERN = r'\{\+margin:(.+?)\}'
         md.inlinePatterns.register(MarginInlineProcessor(MARG_PATTERN, md), 'marginnote', 175)
 
 """
@@ -194,6 +203,9 @@ class ReferenceExtension(Extension):
 """
 class FigureProcessor(BlockProcessor):
     RE_FENCE_START = r'!\[(.+?)\]\((.+?)\)'
+    def __init__(self,md):
+        self.md = md
+        super().__init__(md.parser)
 
     def test(self, parent, block):
         return re.match(self.RE_FENCE_START,block)
@@ -210,8 +222,10 @@ class FigureProcessor(BlockProcessor):
 
         if ext=='.htm' or ext=='.html':
             if len(caption)>0:
-                Ep = etree.SubElement(parent, 'p')
-                etree.SubElement(Ep,'label',attrib={'for':filename,'class':'margin-toggle'})
+                Ep = etree.SubElement(parent, 'figure')
+                El = etree.SubElement(Ep,'label',attrib={'for':filename,'class':'margin-toggle'})
+                El.text = self.md.htmlStash.store("&#8853;")
+
                 etree.SubElement(Ep,'input',attrib={'type':'checkbox','id':filename,'class':'margin-toggle'})
                 Ecap = etree.SubElement(Ep,'span',attrib={'class':'marginnote'})
                 Ecap.text = caption
@@ -225,7 +239,8 @@ class FigureProcessor(BlockProcessor):
         else: # Static image
             Efig = etree.SubElement(parent, 'figure')
             if len(caption)>0:
-                etree.SubElement(Efig,'label',attrib={'for':filename,'class':'margin-toggle'})
+                El = etree.SubElement(Efig,'label',attrib={'for':filename,'class':'margin-toggle'})
+                El.text = self.md.htmlStash.store("&#8853;")
                 etree.SubElement(Efig,'input',attrib={'type':'checkbox','id':filename,'class':'margin-toggle'})
                 Ecap = etree.SubElement(Efig,'span',attrib={'class':'marginnote'})
                 Ecap.text = caption
@@ -237,7 +252,7 @@ class FigureProcessor(BlockProcessor):
 class FigureExtension(Extension):
     def extendMarkdown(self, md):
         MATH_PATTERN = r'\$(.*?)\$'
-        md.parser.blockprocessors.register(FigureProcessor(md.parser), 'fig', 175)
+        md.parser.blockprocessors.register(FigureProcessor(md), 'fig', 175)
 
 """
     Finalize tree
@@ -264,7 +279,7 @@ class MyTreeprocessor(Treeprocessor):
             text = text + strip_brackets(bib_e.fields['title']) + '. '
             text = text + '<em>'+ strip_brackets(bib_e.fields['journal']) + '</em>.'
 
-            Ep = etree.SubElement(Esec,'p')
+            Ep = etree.SubElement(Esec,'p',attrib={'class':'hangingindent'})
             Ep.text =  self.md.htmlStash.store(text)
 
 
