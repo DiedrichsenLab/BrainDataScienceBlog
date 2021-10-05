@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as pe
 import plotly.io as pio
 import plotly.graph_objects as go
-
+import scipy.stats as ss
 
 margdict = dict(l=10,r=10, b=10, t=10, pad=4)
 
@@ -225,7 +225,6 @@ def plot_Figure4(T,theta,M):
     mfixL = fixL.mean(axis=1)
     fixL = fixL - mfixL.reshape(-1,1)
     flexL = flexL - mfixL  # apply same scaling
-
     # Plot individual linees
     for i in range(fixL.shape[0]):
         fig.add_scatter(x=fix_r, y=fixL[i,:],
@@ -326,11 +325,22 @@ def dosim_4():
     fig=plot_Figure4(T,theta,M)
     fig.write_html("Figure_4.html",include_plotlyjs='cdn',full_html=False)
     fig.show()
+    fixL = T.likelihood.iloc[:,0:-1].to_numpy()
+    # recenter the correlation
+    mfixL = fixL.mean(axis=1)
+    fixL = fixL - mfixL.reshape(-1,1)
+    n= fixL.shape[1]
+    fix_r = np.empty((n,))
+    for i in range(n):
+        fix_r[i]= M[i].corr
+    R1=ss.ttest_rel(fixL[:,14],fixL[:,20])
+    print(R1)
+
     pass
 
 
 
 
 if __name__ == "__main__":
-    dosim_3()
+    dosim_4()
     pass

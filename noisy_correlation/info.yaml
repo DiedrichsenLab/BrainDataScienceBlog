@@ -1,10 +1,9 @@
 title: How can we estimate the true correlation between two activity patterns?
 shorttitle: Noisy Correlations
-description: As neuroscience we often want to assess how overlapping two brain activity patterns are. But estimating the the true correlation between patterns can be extremely tricky.
-tweet: <blockquote class="twitter-tweet"><p lang="en" dir="ltr">DiedrichsenLab (@diedrichsenlab) <a href="https://twitter.com/diedrichsenlab/status/1423639236520161283?ref_src=twsrc%5Etfw">August 6, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+description: In neuroimaging, we often want to assess how overlapping two brain activity patterns are. But estimating the true correlation between patterns can be extremely tricky.
+tweet: <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Welcome Dr. Berlot, who passed her PhD defence today. Also thanks to <a href="https://twitter.com/NeuroBeats?ref_src=twsrc%5Etfw">@NeuroBeats</a> <a href="https://twitter.com/BButlerTweets?ref_src=twsrc%5Etfw">@BButlerTweets</a> <a href="https://twitter.com/LauraBatterink?ref_src=twsrc%5Etfw">@LauraBatterink</a> and <a href="https://twitter.com/MariusPeelen?ref_src=twsrc%5Etfw">@MariusPeelen</a> who gave her a good run for her money! <a href="https://t.co/lmyOr3pv6N">pic.twitter.com/lmyOr3pv6N</a></p>&mdash; DiedrichsenLab (@diedrichsenlab) <a href="https://twitter.com/diedrichsenlab/status/1407890627493347337?ref_src=twsrc%5Etfw">June 24, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 authors:
   - Jörn Diedrichsen
-  - Additional
-released: 2021-10-12
-modified: 2021-10-20
-version: 1.0
+  - Giacomo Ariani
+  - Eva Berlot
+released: 10/6/2021

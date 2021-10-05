@@ -33,7 +33,6 @@ class MathInlineExtension(Extension):
 """
     Block Processor for mathjax
 """
-
 class MathBlockProcessor(BlockProcessor):
     RE_FENCE_START = r'\$\$'
 
@@ -113,7 +112,7 @@ class MarginnoteExtension(Extension):
 class CapsInlineProcessor(InlineProcessor):
     """
         Caps Processor
-        {+margin:id:text}
+        {{Caps}}
     """
 
     def handleMatch(self, m, data):

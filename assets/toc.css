@@ -1,0 +1,60 @@
+div.tocContainer {
+    display: flex;
+    flex: row;
+    margin-bottom: 30px;
+    padding: 15px;
+}
+
+div.tocContainer:hover{
+    background-color: #f4f4f0;
+}
+
+
+img.tocImage {
+    min-width: 150px;
+    min-height: 150px;
+    width: 150px;
+    height: 150px;
+    margin-right: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.tocText {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+p.tocTitle {
+    font-weight: 400;
+    font-size: 2.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+p.tocAuthors {
+    font-style: italic;
+    font-weight: 400;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+    font-size: 1.3rem;
+}
+
+p.tocDescr {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding-right: 0;
+    vertical-align: baseline;
+    font-size: 1.3rem;
+}
+
+p.tocDate {
+    margin-top: 0.3rem;
+    margin-bottom: 0rem;
+    padding-right: 0;
+    vertical-align: baseline;
+    font-style: italic;
+    font-size: 1.0rem;
+}

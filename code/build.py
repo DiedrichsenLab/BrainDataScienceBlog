@@ -27,6 +27,21 @@ def parse_blog(dirname):
     """
         Parsing
     """
+    # Ensure that the target does exist
+    target_dir = f"{buildDir}/{dirname}"
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    # Go into source directory
+    os.chdir(f"{sourceDir}/{dirname}")
+    # Copy over Icon
+    copy_resource("icon.png")
+    # Get the information on the blog
+    with open("info.yaml", "r", encoding="utf-8") as info_file:
+        info = yaml.load(info_file,Loader=yaml.FullLoader)
+        info['id']=dirname
+
+    # Register the new Markdown extensions
     markdown_include = MarkdownInclude(configs={'base_path':'./source/', 'encoding': 'iso-8859-1'})
     tree_ext = me.TreeExtension()
     side_ext = me.SidenoteExtension()
@@ -35,16 +50,13 @@ def parse_blog(dirname):
     math_ext = me.MathInlineExtension()
     math_bext = me.MathBlockExtension()
     fig_ext = me.FigureExtension()
+    caps_ext = me.CapsExtension()
 
     print(f'parsing {dirname}')
     ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,
-         math_ext,math_bext,fig_ext]
+         math_ext,math_bext,fig_ext,caps_ext]
 
-    os.chdir(f"{sourceDir}/{dirname}")
-    copy_resource("icon.png")
-    with open("info.yaml", "r", encoding="utf-8") as info_file:
-        info = yaml.load(info_file,Loader=yaml.FullLoader)
-        info['id']=dirname
+    # Now process the blog using the markdown extensions
     with open("text.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
         html = md.markdown(text,extensions=ext)
@@ -64,19 +76,19 @@ def make_index(blogs,name):
     etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
 
     Ebody = etree.SubElement(Edoc,'body')
-
+    Eart = etree.SubElement(Ebody,'article')
     # Add Navigation line
-    Enav = etree.SubElement(Ebody,'div',attrib={'class':'navline'})
+    Enav = etree.SubElement(Eart,'div',attrib={'class':'navline'})
     # Ea1 = etree.SubElement(Enav,'a',attrib={'href':'../index.htm'})
     # Ea1.text = 'Diedrichsenlab'
     # Et1 = etree.SubElement(Enav,'span')
     Enav.text = 'Brain, Data, and Science'
 
 
-    Eh1 = etree.SubElement(Ebody,'h1')
+    Eh1 = etree.SubElement(Eart,'h1')
     Eh1.text = 'Brain, Data, and Science'
     for i,blog in blogs.iterrows():
-        Elink = etree.SubElement(Ebody,'a',attrib={'href':blog.id + '/index.htm'})
+        Elink = etree.SubElement(Eart,'a',attrib={'href':blog.id + '/index.htm'})
         Ediv = etree.SubElement(Elink,'div',attrib={'class':'tocContainer'})
         etree.SubElement(Ediv,'img',attrib={'class':'tocImage','src':f"{blog.id}/icon.png"})
         Etxt = etree.SubElement(Ediv,'div',attrib={'class':"tocText"})
@@ -88,13 +100,20 @@ def make_index(blogs,name):
         Edescrip.text = blog.description
         Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDate"})
         Edescrip.text = f"First published: {blog['released']}"
-    Ebody.append(Enav)
+    Eart.append(Enav)
     tree._setroot(Edoc)
     tree.write(name)
 
 
 def main():
-    """ Build all blogs"""
+    """ Copy the required assets over """
+    assets = ['mathjax-config.js','toc.css','tufte.css','tufteSans.css']
+    for filename in assets:
+        source = os.path.join(sourceDir,'assets',filename)
+        target = os.path.join(buildDir,filename)
+        shutil.copy2(source,target)
+
+    # Build all the blogs in the list
     with open("list.yaml", "r", encoding="utf-8") as list_file:
         listing = yaml.load(list_file,Loader=yaml.FullLoader)
         info = []
