@@ -15,6 +15,10 @@ from build import copy_resource
 # Global list of references
 _references = []
 
+_sourceDir = os.path.dirname(os.path.dirname(__file__))
+
+with open(os.path.join(_sourceDir,'assets','stats_counter.html')) as f:
+    _statstag = f.read()
 
 """
     Inline Processor for mathjax
@@ -324,12 +328,18 @@ class MyTreeprocessor(Treeprocessor):
             self.add_references(Eart)
 
         # Make the footer
-        Ef = etree.SubElement(Eart,'div',attrib={'class':'footer'})
-        html = f"<h3>Comments, discussions, feedback, or likes:</h3> {info['tweet']}"
-        Ef.text = self.md.htmlStash.store(html)
+        if 'tweet' in info.keys():
+            Ef = etree.SubElement(Eart,'div',attrib={'class':'footer'})
+            html = f"<h3>Comments, discussions, and feedback:</h3> {info['tweet']}"
+            Ef.text = self.md.htmlStash.store(html)
 
         # Add another navigation line
         Eart.append(Enav)
+
+        # Add statscounter code in the end
+        Estats = etree.SubElement(Ebody,'div')
+        Estats.text =  self.md.htmlStash.store(_statstag)
+        # Add
 
         root.append(Edoc)
         return None

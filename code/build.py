@@ -104,6 +104,8 @@ def make_index(blogs,name):
         Edescrip = etree.SubElement(Etxt,'p',attrib={'class':"tocDate"})
         Edescrip.text = f"First published: {blog['released']}"
     Eart.append(Enav)
+    # Add statscounter code
+
     tree._setroot(Edoc)
     tree.write(name)
 
