@@ -1,39 +1,53 @@
-# LabWebsiteFromMarkdown
-To enable quicker and better updates to the Lab website, I set up a repository using the Markdown library to edit the content and Markdown and then automatically export the content to the lab website. I hope this enables more people in the lab to contribute to the site and keep information updated. 
+# BrainDataScienceBlog
+This is a repository with the code and raw materials to build the [*Brain, Data, and Science*](http://diedrichsenlab.org/BrainDataScience) Blog. It is heavily build on the [Tufte.css](https://edwardtufte.github.io/tufte-css/) and the [markdown library](https://python-markdown.github.io/).
 
-## Editing Markdown
+## Installation 
 
-Pages can be written as markdown `.md` files place in the correct subfolder in `source`. In the markdown you can use standard heading, formating, links, etc. See this [Guide](https://www.markdownguide.org/basic-syntax/). Additionally, you can use the following elements: 
+Fork or clone the [GitHub repository](https://github.com/DiedrichsenLab/BrainDataScienceBlog).
 
-`<p>,<div>,<...>`: Any block-level html tag will be untouched and included
+The repro required `python v >= 3.8`. You also need to have the following dependencies installed: 
 
-`{!<FILE.HTM>!}`: Includes a raw html file into the page 
+```
+pip install markdown
+pip install xml
+pip install yaml
+pip install pandas
+pip install shutil 
+pip intall pybtex
+```
 
-`{+head:<WINDOWTITLE>:style3.css}`: Adds the header for the website with a title and CSS sheet to include 
+## Building the webpage
 
-`{+title:<TITLE>:<ICON>}`: Adds the diedrichsenlab-style header bar, the icon is optional 
+A single Markdown file can be compiled to the target directory using: 
 
-`{+ref:<BIBID>: <LINK>}`: Adds a reference from the references.bib file with a pdf-link to the paper (optional)
+`python3 build.py`
 
- `{+personcell: <FIRST>: <LAST>: <ROLE>: <DETAILS> :<PICTURE>: <EMAIL>: <LINK>}`: Adds a person cell for the people's page
+## Writing a new blog
 
-`{+sidebar:<ACTIVE>}`: Add the menu side bar for the mid, with a specific number icon active
+Each blog has its own directory in the repository. The directory name serves as the id for the blog. The code builds and includes all the blogs that are listed in `list.yaml`. 
 
-New images / references should be submitted to the corresponding folder in `source`
+All blogs must have the following files:
 
-## Deploying the webpage
+* `icon.png`: a square icon for the blog (ideally 150x150px)
+* `info.yaml`: Basic information about the blog 
+* `text.md`: Markdown file with text
+* `references.bib`: Optional bibtex file with references - insert a blank file if you don't use citations. 
 
-A single Markdown file can be compiled to the target directory using 
+Blogs are written in plain markdown `.md` language. I like to use the free editor [Typora](https://typora.io/) which is a clean wysiwyg editor for markdown that also sets formulas correctly. Besides the standard markdown, we are using the following tags as markdown extensions:  
 
-`python3 build.py filename1 filename2`: From the file name, drop the `.md` extenstion 
+`<p>,<div>,<...>`: Any block-level html tag will be untouched and included as is. 
 
-Also possible is to build a custom list of files: 
+`{+side:text}`: Adds a numbered side note. 
 
-`root`: All main pages 
+`{+margin:text}`: Adds a margin note without a number. 
 
-`research`: All research pages 
+`{{text}}`: Formats text in Small Caps - you can highlight new thoughts at the beginning of a paragraph like this. 
 
-`suit`: All suit-related pages 
+ `[+citep:bibtex-id]` and `[+citet:bibtex-id]`: Citation to a reference in the `references.bib` file. 
 
+`![alt title:filename] Caption`: Block-level tag (separate from rest by blank lines) that includes a Figure. 
 
+For more information about formating options, see this [example blog](http://www.diedrichsenlab.org/BrainDataScience/example_blog/index.htm).
+
+For problems, comments, or question, please use the [Issue channel on GitHub](https://github.com/DiedrichsenLab/BrainDataScienceBlog/issues). 
 

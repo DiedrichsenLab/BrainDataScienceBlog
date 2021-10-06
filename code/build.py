@@ -1,17 +1,20 @@
-# from bs4 import beatifulsoup
 import markdown as md
 import markdown_extensions as me
 from markdown_include.include import MarkdownInclude
 import xml.etree.ElementTree as etree
-import re
-import sys
 import yaml
 import os
 import pandas as pd
 import shutil
 
+# Source directory is the repository based
+sourceDir = os.path.dirname(os.path.dirname(__file__))
+# Build directory can be set here optionally - defaults to html in repository
 buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
-sourceDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/BrainDataScienceBlog'
+if not os.path.exists(buildDir):
+    buildDir = os.path.join(sourceDir,'html')
+    if not os.path.exists(buildDir):
+        os.makedirs(buildDir)
 
 def copy_resource(filename):
     """
