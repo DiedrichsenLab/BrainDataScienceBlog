@@ -2,19 +2,25 @@ import numpy as np
 import PcmPy as pcm
 from PcmPy import sim
 import pandas as pd
-import plotly.express as pe
 import plotly.io as pio
 import plotly.graph_objects as go
 import scipy.stats as ss
 
 margdict = dict(l=10,r=10, b=10, t=10, pad=4)
 
+
 def get_corr(X,cond_vec):
+    """
+        Get normal correlation
+    """
     p1 = X[cond_vec==0,:].mean(axis=0)
     p2 = X[cond_vec==1,:].mean(axis=0)
     return np.corrcoef(p1,p2)[0,1]
 
 def get_noiseceil(X,cond_vec):
+    """
+        Calculate noise ceiling over reliabilities
+    """
     rel = np.array([0.0,0.0])
     for i in [0,1]:
         N = np.sum(cond_vec==i) # Number of measurements
@@ -32,6 +38,9 @@ def get_noiseceil(X,cond_vec):
 
 
 def get_crossblock(X,cond_vec,part_vec):
+    """
+        calculate the cross-block correlation
+    """
     G = pcm.util.est_G_crossval(X,cond_vec,part_vec)
     var = G[0][0,0]*G[0][1,1]
     if var<=0:
@@ -73,8 +82,7 @@ def do_sim_corrpcm(corr=0.7,signal=0.5,n_sim=20,nsteps = 11,randseed=None):
         M.append(pcm.CorrelationModel(f"{r:0.2f}",num_items=1,corr=r,cond_effect=False))
     Mflex = pcm.CorrelationModel("flex",num_items=1,corr=None,cond_effect=False)
     M.append(Mflex)
-    # For each simulation scenario, get different
-
+    # Now do the simulations and fit with the models
     rng = np.random.default_rng(randseed)
     Mtrue = pcm.CorrelationModel('corr',num_items=1,corr=corr,cond_effect=False)
     D = pcm.sim.make_dataset(Mtrue, [0,0], cond_vec,part_vec=part_vec,n_sim=n_sim, signal=signal, rng=rng)
@@ -279,11 +287,11 @@ def plot_Figure4(T,theta,M):
             autosize=True, # width =xx, heigh =xxx
             template = 'plotly_white',
             yaxis=dict(
-                title_text="Likelihood",
+                title_text="Difference in Log-Likelihood",
                 titlefont=dict(size=18)
             ),
             xaxis=dict(
-                title_text="Signal to Noise",
+                title_text="Correlation",
                 titlefont=dict(size=18),
                 range=[0,1.02]),
             margin=margdict)
@@ -291,16 +299,14 @@ def plot_Figure4(T,theta,M):
 
 
 def dosim_2():
+    # Make a spacing of different signals
     sig = np.linspace(0.1,5.1,21)# np.logspace(np.log(0.2),np.log(5),10)
+    # Get the simulations
     D = do_sim(0.7,n_sim=200,signal=sig,randseed=10)
-    D['noiseceil_nan'] = np.isnan(D.noiseCeil)
-    D['corr_corrected'] = D.r_naive / D.noiseCeil
-    D['corr_corrected_imp'] = D.corr_corrected
-    D.loc[np.isnan(D.corr_corrected),'corr_corrected_imp']=0
-    D['cross_block_imp'] = D.cross_block
-    D.loc[np.isnan(D.cross_block),'cross_block_imp']=0
+    # Summarize the mean and std deviation
     T = D.groupby("signal").apply(np.mean)
     Tstd = D.groupby("signal").apply(np.std)
+    # Plot and show the Figure
     fig = plot_Figure2(D,T,Tstd)
     fig.write_html("Figure_2.html",include_plotlyjs='cdn',full_html=False)
     fig.show()
@@ -342,5 +348,5 @@ def dosim_4():
 
 
 if __name__ == "__main__":
-    dosim_4()
+    dosim_2()
     pass
