@@ -348,5 +348,5 @@ def dosim_4():
 
 
 if __name__ == "__main__":
-    dosim_2()
+    dosim_4()
     pass
