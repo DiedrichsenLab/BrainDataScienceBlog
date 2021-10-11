@@ -253,6 +253,7 @@ a:link, .tufte-underline, .hover-tufte-underline:hover {
 .hangingindent {
     padding-left: 22px ;
     text-indent: -22px ;
+    font-size: 1.2rem
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {

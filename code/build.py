@@ -55,6 +55,8 @@ def parse_blog(dirname):
     fig_ext = me.FigureExtension()
     caps_ext = me.CapsExtension()
 
+    ref_ext.reset()
+
     print(f'parsing {dirname}')
     ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,
          math_ext,math_bext,fig_ext,caps_ext]

@@ -158,7 +158,6 @@ class ReferenceProcessor(InlineProcessor):
 
     def __init__(self,pattern,md):
         self.bib = parse_file('references.bib')
-        _references = []
         super().__init__(pattern,md)
 
     def handleMatch(self, m, data):
@@ -200,6 +199,12 @@ class ReferenceExtension(Extension):
     def extendMarkdown(self, md):
         REF_PATTERN = r'\[\+cite(.):\s*(.+?)\]'
         md.inlinePatterns.register(ReferenceProcessor(REF_PATTERN, md), 'ref', 175)
+
+    def reset(self):
+        global _references
+        _references = []
+
+
 
 """
     Block Processor for Figure
