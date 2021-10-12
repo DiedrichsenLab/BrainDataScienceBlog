@@ -1,6 +1,6 @@
 markdown
-xml
+markdown-include
+python-xml
 yaml
 pandas
-shutil 
 pybtex

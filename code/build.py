@@ -8,9 +8,9 @@ import pandas as pd
 import shutil
 
 # Source directory is the repository based
-sourceDir = os.path.dirname(os.path.dirname(__file__))
+sourceDir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))
 # Build directory can be set here optionally - defaults to html in repository
-buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
+buildDir = os.path.join(sourceDir,'_build')
 if not os.path.exists(buildDir):
     buildDir = os.path.join(sourceDir,'html')
     if not os.path.exists(buildDir):
@@ -121,7 +121,8 @@ def main():
         shutil.copy2(source,target)
 
     # Build all the blogs in the list
-    with open("list.yaml", "r", encoding="utf-8") as list_file:
+    ymlFile =  os.path.join(sourceDir,'list.yaml')
+    with open(ymlFile, "r", encoding="utf-8") as list_file:
         listing = yaml.load(list_file,Loader=yaml.FullLoader)
         info = []
         for blog in listing['blogs']:
