@@ -1,6 +1,6 @@
 markdown
 markdown-include
 xml-python
-yaml
+pyyaml
 pandas
 pybtex
