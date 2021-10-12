@@ -1,4 +1,4 @@
-# Estimating correlations between noisy activity patterns: tricky problems and generative solutions
+# Estimating correlations between noisy activity patterns. A tricky problem with a generative solution.
 
 <section markdown="1">
 In the quest to better understand brain function, we want to know how the complex patterns of neural activity, which can be observed using modern neuroimaging techniques (i.e., array recoding, fMRI, or M/EEG), relate to the tasks that the brain is engaged in. In this endeavour, we often want to know how similar two activity patterns are to each other. If two tasks (let's call them *A* and *B*) activate a specific brain region in a similar way, we can infer that this brain region does something similar in the two conditions. In this approach, we are not so much concerned with whether task *A* activates the region more than task *B* - rather we want to know how similar, or overlapping, brain activity *patterns* are - that is, we are interested in the *correlation* between the two activity patterns.
