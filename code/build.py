@@ -12,7 +12,7 @@ sourceDir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file_
 # Build directory can be set here optionally - defaults to html in repository
 buildDir = os.path.join(sourceDir,'_build')
 if not os.path.exists(buildDir):
-    buildDir = os.path.join(sourceDir,'html')
+    buildDir = os.path.join(sourceDir,'_build')
     if not os.path.exists(buildDir):
         os.makedirs(buildDir)
 
