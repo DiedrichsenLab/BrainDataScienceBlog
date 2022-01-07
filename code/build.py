@@ -58,7 +58,7 @@ def parse_blog(dirname):
     ref_ext.reset()
 
     print(f'parsing {dirname}')
-    ext=['md_in_html',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,
+    ext=['md_in_html','tables',markdown_include,tree_ext,side_ext,margin_ext,ref_ext,
          math_ext,math_bext,fig_ext,caps_ext]
 
     # Now process the blog using the markdown extensions
