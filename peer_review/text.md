@@ -1,10 +1,15 @@
-# Rethinking peer review at eLife
-## Replacing the journal name as a quality indicator
+# Rethinking peer review
+## Supplanting journal names as quality indicator
+
+Jörn Diedrichsen & Mihaela Iordanova
+
+
 
 <section markdown="1">
-*This blog reflects preliminary and ongoing dicussions in one eLife editorial working group with Michaela Iordanova, Tim Behrens, and Andy Collings. The ideas and opinions expressed here do not reflect a consensus from across the eLife editorial board. With permission of the working group, I am putting these ideas out here for discussion and feedback.*
+*This blog reflects preliminary and ongoing dicussions in one eLife editorial working group with a lot of input from Tim Behrens, and Andy Collings. The ideas and opinions expressed here do not reflect a consensus from across the eLife editorial board. With permission of the working group, we are putting these ideas out here for discussion and feedback.*
 </section>
 <section markdown="1">
+
 
 
 ## On the current state of peer review
@@ -16,7 +21,7 @@ The second function of peer review is to provide an initial quality evaluation o
 
 Problems with peer review arises often from the fact that these two functions, improving and evaluating, are incompatible with each other. Reviewers often wish to signal that the paper is "not good enough" for the specific journal, and this will overshadow their whole review, making their comments less than helpful for improving the paper. Some reject decisions signal that the paper has a deep flaw that prevents it from becoming part of the scientific literature, other reject decisions mean that the paper wasn't judged to be of broad enough interest. To game the system, authors overstate the importance of their work, consciously not citing previous literature to stress its novelty and uniqueness. This obfuscates the literature, and the repeated review in a series of journals makes the system slow and inefficient. 
 
-One of the long-term goals of *eLife* is therefore to *move science away from the use of journal titles as the primary measure of the quality of research* [+citep:eisen2020]. Of course, it would be ideal if we would all actually *read* the papers that we judge.{+side:Crazy idea, I know.} However, expecting a job search committee to read most of the papers from most of the candidates is unfortunately not realistic. In my experience, a panel is doing quite well if some committee member have read at least one paper from each long-listed candidate. Thus, if we like it or not, as an individual, we often have to rely on quick heuristics to determine the quality of papers{+side: A clear case of *bounded rationality* in the sense that cognitive capacity and time constrain our decisions [+citep:simon1972].}. If we take away the journal name as one of the main indicators of quality without providing an alternative, the community will start using something else, such as the name of the institution, number of social media engagements, or other metrics that may be even more fraught with social bias than the current peer review system. 
+One of the long-term goals of *eLife* is therefore to *move science away from the use of journal titles as the primary measure of the quality of research* [+citep:eisen2020]. Of course, it would be ideal if we would all actually *read* the papers that we judge.{+side:Crazy idea, we know.} However, expecting a job search committee to read most of the papers from most of the candidates is unfortunately not realistic. In my experience, a panel is doing quite well if some committee member have read at least one paper from each long-listed candidate. Thus, if we like it or not, as an individual, we often have to rely on quick heuristics to determine the quality of papers{+side: A clear case of *bounded rationality* in the sense that cognitive capacity and time constrain our decisions [+citep:simon1972].}. If we take away the journal name as one of the main indicators of quality without providing an alternative, the community will start using something else, such as the name of the institution, number of social media engagements, or other metrics that may be even more fraught with social bias than the current peer review system. 
 
 ## The proposed rating system  
 Here is *one* proposal that is being currently discussed in the eLife working group. It is a simple rating scheme that could be applied to all published empirical papers on pre-publication servers. The proposed rating has two dimensions: the *importance of the scientific claim* and the *quality of the data and methods*.{+side: Other dimensions and additional badges (for data sharing, etc) are of course possible. However, the proposed two dimensions may provide a good compromise between providing enough detail without getting too complex.} The two dimensions should be judged separately, as papers clearly differ to what degree they succeed in either category. The increased  sophistication of data collection techniques has led to some labs specializing in creating high-quality data sets, while other groups may focus on novel theoretical models and ideas. The rating system acknowledges that both types of papers are important for driving science forward. 
@@ -69,6 +74,8 @@ A related problem is that specific journals (or review consortia) may start to i
 </section>
 
 <section markdown="1">
+
 ## Conclusions
 All in all, peer review is in many ways like democracy: It is flawed in many ways, but compared to other exisiting systems, it is still the least unfair and malevolent. In a time of faster publication, and increased public scrutiny and distrust of science, however, it is high time to not only have open access to scientific publications, but also open access to scientific evaluations. The editorial changes in *eLife* may sometimes seem disruptive, but we need to keepmodernizing peer review, such that it can keep fullfilling its important functions in the future. 
 </section>
+
