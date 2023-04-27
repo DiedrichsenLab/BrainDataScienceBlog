@@ -285,7 +285,8 @@ class MyTreeprocessor(Treeprocessor):
                 text = text + strip_brackets(authors[0].last_names[0]) + ' et al.'
             text = text + ' (' + bib_e.fields['year'] + '). '
             text = text + strip_brackets(bib_e.fields['title']) + '. '
-            text = text + '<em>'+ strip_brackets(bib_e.fields['journal']) + '</em>.'
+            if 'journal' in bib_e.fields:
+                text = text + '<em>'+ strip_brackets(bib_e.fields['journal']) + '</em>.'
 
             Ep = etree.SubElement(Esec,'p',attrib={'class':'hangingindent'})
             Ep.text =  self.md.htmlStash.store(text)
