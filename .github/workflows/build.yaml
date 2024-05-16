@@ -1,0 +1,26 @@
+name: Build-blog
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Install requirements and build
+        run: |
+          pip install -r requirements.txt
+          python3 ./code/build.py
+          ls ./_build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.PAT_BLOG }}
+          publish_dir: ./_build

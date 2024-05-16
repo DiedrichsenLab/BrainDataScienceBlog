@@ -1,26 +1,41 @@
 # BrainDataScienceBlog
 This is a repository with the code and raw materials to build the [*Brain, Data, and Science*](http://diedrichsenlab.org/BrainDataScience) Blog. It is heavily build on the [Tufte.css](https://edwardtufte.github.io/tufte-css/) and the [markdown library](https://python-markdown.github.io/).
 
-## Installation 
+## Automatic GH-pages deployment
+
+### Step-0 Fork this repository ⑂
+
+### Step-1 Create a GitHub access token 🔑 
+
+Please follow [these instructions](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token) to create an access token. While creating the token, you will only click the `repository` checkbox. 
+
+### Step-2 Create an encrypted secret for your repo 😎
+
+Simply follow [these steps](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) to create a **repository secret named `PAT_BLOG`**.
+
+### Step-3 That's it! 
+
+If a secret is added successfully, a webpage build will be run by GitHub actions automatically and the webpage will be published online at: `your_gh_user_name.github.io/BrainDataScienceBlog` (unless you change the repository name). 
+
+You can test the build by simply changing the README file (remove the last line etc.). When you add more content following the [writing a new blog section](#writing-a-new-blog), those pages will be built automatically and added to your webpage! 
+
+## Local Installation 
 
 Fork or clone the [GitHub repository](https://github.com/DiedrichsenLab/BrainDataScienceBlog).
 
-The repro required `python v >= 3.8`. You also need to have the following dependencies installed: 
+The repro required `python v >= 3.6`. You also need to have the following dependencies installed: 
 
 ```
-pip install markdown
-pip install xml
-pip install yaml
-pip install pandas
-pip install shutil 
-pip intall pybtex
+pip install -r requirements.txt
 ```
 
-## Building the webpage
+## Building the webpage manually
 
-A single Markdown file can be compiled to the target directory using: 
+A single Markdown file can be compiled to the target (`_build`) directory using: 
 
-`python3 build.py`
+`python3 ./code/build.py`
+
+If the build succeeds, you can see the webpage by opening `_build/index.htm` in your web browser.
 
 ## Writing a new blog
 

@@ -1,0 +1,6 @@
+markdown
+markdown-include
+xml-python
+pyyaml
+pandas
+pybtex
