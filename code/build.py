@@ -10,7 +10,7 @@ import shutil
 # Source directory is the repository based
 sourceDir = os.path.dirname(os.path.dirname(__file__))
 # Build directory can be set here optionally - defaults to html in repository
-buildDir = '/Users/jdiedrichsen/Dropbox (Diedrichsenlab)/Sites/Diedrichsenlab/BrainDataScience'
+buildDir = '/Users/jdiedrichsen/Dropbox/Sites/Diedrichsenlab/BrainDataScience'
 if not os.path.exists(buildDir):
     buildDir = os.path.join(sourceDir,'html')
     if not os.path.exists(buildDir):
@@ -45,7 +45,7 @@ def parse_blog(dirname):
         info['id']=dirname
 
     # Register the new Markdown extensions
-    markdown_include = MarkdownInclude(configs={'base_path':'./source/', 'encoding': 'iso-8859-1'})
+    markdown_include = MarkdownInclude(configs={'base_path':'./source/', 'encoding': 'utf-8'})
     tree_ext = me.TreeExtension()
     side_ext = me.SidenoteExtension()
     margin_ext = me.MarginnoteExtension()

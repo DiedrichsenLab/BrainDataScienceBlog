@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 # MAc specfic stuff
-
 .DS_Store
+*.docx
+*/drafts/*

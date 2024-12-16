@@ -163,24 +163,35 @@ class ReferenceProcessor(InlineProcessor):
     def handleMatch(self, m, data):
         mode = m.group(1)
         ref_key = m.group(2)
-        if ref_key not in _references:
-            _references.append(ref_key)
-        bib_e = self.bib.entries[ref_key]
-        authors = bib_e.persons['author']
-        text = ''
-        num_auth = len(authors)
-        if (num_auth == 1 ):
-            text = text + strip_brackets(authors[0].last_names[0])
-        elif (num_auth == 2):
-            text = text + strip_brackets(authors[0].last_names[0]) + ' & ' + strip_brackets(authors[1].last_names[0])
+        # For multiple references, split the key
+        ref_keys = ref_key.split(';')
+        if mode== 'p':
+            text = '('
         else:
-            text = text + strip_brackets(authors[0].last_names[0]) + ' et al.'
-        if mode == 't':
-            text = text + ' (' + bib_e.fields['year'] + ')'
-        elif mode == 'p':
-            text = '(' + text + ', ' + bib_e.fields['year'] + ')'
-        else:
-            raise(NameError('can only understand +citep and +citet'))
+            text = ''
+        for i,ref_key in enumerate(ref_keys):
+            if ref_key not in _references:
+                _references.append(ref_key)
+            bib_e = self.bib.entries[ref_key]
+            authors = bib_e.persons['author']
+            num_auth = len(authors)
+            # assemble citation string
+            if i > 0:
+                text = text + '; '
+            if (num_auth == 1 ):
+                text = text + strip_brackets(authors[0].last_names[0])
+            elif (num_auth == 2):
+                text = text + strip_brackets(authors[0].last_names[0]) + ' & ' + strip_brackets(authors[1].last_names[0])
+            else:
+                text = text + strip_brackets(authors[0].last_names[0]) + ' et al.'
+            if mode == 't':
+                text = text + ' (' + bib_e.fields['year'] + ')'
+            elif mode == 'p':
+                text = text + ', ' + bib_e.fields['year']
+            else:
+                raise(NameError('can only understand +citep and +citet'))
+        if mode== 'p':
+            text = text + ')'
 
 
         # text = text + strip_brackets(bib_e.fields['title']) + '. '
@@ -301,7 +312,7 @@ class MyTreeprocessor(Treeprocessor):
         Ehead = etree.SubElement(Edoc,'head')
         Ecss1 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../tufteSans.css'})
         Ecss2 = etree.SubElement(Ehead,'link',attrib={'rel':'stylesheet','href':'../latex.css'})
-        Emeta = etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1"})
+        Emeta = etree.SubElement(Ehead,'meta',attrib={'name':'viewport','content':"width=device-width, initial-scale=1",'charset':'utf-8'})
 
         EMathHJax1 = etree.SubElement(Ehead,'script',
             attrib={'src':"../mathjax-config.js"})
