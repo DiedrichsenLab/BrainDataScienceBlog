@@ -30,7 +30,7 @@ To include automatic reference formating, include a  `reference.bib` file in the
 References then can then be cited using the tag from the bib-file by using a `[+citet: Yokoi2019]` or `[+citep: Berlot2018]` tag. The `citet` citations are replaced with [+citet: Yokoi2019],  the `citep` citations are replaced with [+citep: Berlot2018]. The citations are then added to a reference section in the end of the document.{+side:You can also add citations to a side note [+citep: Berlot2018], so that the reference does not disrupt the flow of reading, but at the same time the information is right there.}
 
 ### Formulas
-Math type setting is achieved over MathJax. Math can be either included over inline math, using the dollar sign `$a \ne 0$` with is set as $a \ne 0$. You can also use round paratheses as delimiter, such as: `\\(ax^2 + bx + c = 0\\)` which is set as \\(ax^2 + bx + c = 0\\) . Display equations are delimited by double dollar signs and separated from the main text using an empty line.
+Math type setting is achieved over MathJax. Math can be either included over inline math, using the dollar sign `$a \ne 0$` with is set as $a \ne 0$. You can also use round parantheses as delimiter, such as: `\\(ax^2 + bx + c = 0\\)` which is set as \\(ax^2 + bx + c = 0\\) . Display equations are delimited by double dollar signs and separated from the main text using an empty line.
 
 ```
 $$
