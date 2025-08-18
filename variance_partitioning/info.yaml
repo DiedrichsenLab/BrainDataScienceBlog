@@ -1,6 +1,6 @@
-title: Variance partitioning
+title: Variance partitioning - a seductively simple, but misleading idea 
 shorttitle: Variance partitioning
-description:
 authors:
-  - Jörn Diedrichsen, Derrick, Marieke Mur
-released: 8/12/2025
+  - Derrick Xiang, Marieke Mur, Jörn Diedrichsen
+released: 8/18/2025
+description: Variance partitioning seeks to quantify how much variances a regressor explains in the context of a larger model. In this blog, we highlight why this simple idea can be quite misleading.
