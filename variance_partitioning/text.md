@@ -35,10 +35,10 @@ In summary:
 * the interactions between regressors is simultaneously shaped by the amount of shared variances (which lowers the joint $R^2$), and suppression effects (which increases the joint $R^2$)
 * estimates of shared variance can therefore become negative
 * an estimated shared variance of zero does NOT mean that two regressors explain non-overlapping aspects of the data
-* in general, variance partitioning underestimates unique variances, as it ignores suppression effects
+* in general, variance partitioning underestimates the shared variance, and overestimates the unique contributions, as it ignores suppression effects
 
-Thus, the contribution of a specific regressor must always be seen in the context of the other regressors in the model. The simple notion of partitioning of variance partitioning
-Therefore, in our mind, depicting the variances explained by different models as a Venn-diagram should always come with a big warning label.
+Thus, the contribution of a specific regressor must always be seen in the context of the other regressors in the model. The simple idea of partitioning of variance into unique and shared parts does not capture the whole complexity of how two regressors can interact.
+Therefore, depicting the variances explained by different models as a Venn-diagram should always come with a big red warning label.
 
 ![Figure 4](icon.png)
 
